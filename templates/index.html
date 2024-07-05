@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grid Visualizer</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        #grid-container {
+            display: grid;
+            gap: 2px;
+            margin: 20px auto;
+            position: relative;
+            max-width: 400px; /* Set to grid width */
+        }
+        .grid-cell {
+            width: 100px;
+            height: 100px;
+            background-color: #f0f0f0; /* Default background */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;  /* Needed for positioning the agent image */
+            font-size: 20px;  /* Text size for visibility */
+            color: white;  /* Text color for visibility */
+            box-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+        .gold {
+            background-image: url('https://static.vecteezy.com/system/resources/previews/000/292/174/non_2x/gold-vector-icon.jpg'); /* Update with the correct path */
+            background-size: cover;
+            background-position: center; /* Centers the background image */
+        }
+        .stairs {
+            background-image: url('https://cdn-icons-png.freepik.com/512/93/93160.png'); /* Update with the correct path */
+            background-size: cover;
+            background-position: center; /* Centers the background image */
+        }
+        .pit { background-color: purple; }
+        .wumpus {
+            background-image: url('https://as1.ftcdn.net/v2/jpg/01/86/51/66/1000_F_186516672_yMEmn6ZDracTQ7tczY3ApWpbpho7t8Hi.jpg'); /* Update with the correct path */
+            background-size: cover;
+            background-position: center; /* Centers the background image */
+        }
+        .teleport {
+            background-image: url('https://t4.ftcdn.net/jpg/06/01/59/27/360_F_601592769_jf3urA9tZy03fO4WYUtkha10vV5j1vdc.jpg'); /* Update with the correct path */
+            background-size: cover;
+            background-position: center; /* Centers the background image */
+        }
+        .wall { background-color: black; }
+
+        .agent {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;  /* Cover the cell */
+            height: 100%;  /* Cover the cell */
+            background-image: url('https://images.vexels.com/media/users/3/233084/isolated/preview/372e817f0068fef6f9cc511d3b6aa1c6-secret-service-agent-character.png');  /* Replace with your image path */
+            background-size: cover;
+            pointer-events: none;  /* Allows clicking on the cell beneath */
+            opacity: 0.8; /* Make the agent image slightly transparent to see the cell below */
+        }
+        .text {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            z-index: 1; /* Ensure text is above the agent image */
+        }
+    </style>
+</head>
+<body>
+<div id="grid-container"></div>
+<script>
+    function fetchGrid() {
+        $.get('/get-grid', function(response) {
+            displayGrid(response.grid, response.agent_position);
+        });
+    }
+
+    function displayGrid(grid, agentPosition) {
+        const container = $('#grid-container');
+        container.empty(); // Clear the existing grid
+        container.css('grid-template-columns', `repeat(${grid[0].length}, 100px)`); // Set the number of columns
+
+        grid.forEach((row, i) => {
+            row.forEach((cell, j) => {
+                const cellDiv = $('<div>')
+                    .addClass('grid-cell')
+                    .addClass(getClass(cell));
+                const textSpan = $('<span>').addClass('text').text(getSymbol(cell));
+                cellDiv.append(textSpan);
+                if (i === agentPosition[0] && j === agentPosition[1]) {
+                    cellDiv.append($('<div>').addClass('agent'));
+                }
+                container.append(cellDiv);
+            });
+        });
+    }
+
+    function getClass(cell) {
+        switch(cell) {
+            case 'G': return 'gold';
+            case 'S': return 'stairs';
+            case 'P': return 'pit';
+            case 'W': return 'wumpus';
+            case 'T': return 'teleport';
+            case 'X': return 'wall';
+            default: return '';
+        }
+    }
+
+    function getSymbol(cell) {
+        switch(cell) {
+            case 'G': return '';
+            case 'S': return '';
+            case 'P': return 'Pit';
+            case 'W': return '';
+            case 'T': return '';
+            case 'X': return '';
+            default: return ''; // Display nothing for empty or unknown cells
+        }
+    }
+
+    $(document).ready(function() {
+        setInterval(fetchGrid, 50); // Refresh the grid every 50 milliseconds
+    });
+</script>
+</body>
+</html>

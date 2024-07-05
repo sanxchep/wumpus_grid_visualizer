@@ -1,1 +1,1 @@
-# wumpus_grid_visualizer
+# Wumpus Map Grid Visualizer (With live updates)
