@@ -2,7 +2,7 @@ import requests
 import json
 
 
-def update_grid(new_grid, position, run_id, moves, gold):
+def update_grid(new_grid, position, run_id, moves, gold_collected, gold_data):
     """
     Server URL: https://github.com/sanxchep/wumpus_grid_visualizer
     Start the server and open the URL in a browser to visualize the grid.
@@ -23,7 +23,8 @@ def update_grid(new_grid, position, run_id, moves, gold):
         'position': position,
         'run_id': run_id,
         'moves': moves,
-        'gold': gold
+        'gold_collected': gold_collected,
+        'gold_data': gold_data
     }
     response = requests.post(url, headers=headers, data=json.dumps(payload))
     return response.json()

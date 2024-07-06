@@ -36,6 +36,9 @@
             background-size: cover;
             background-position: center; /* Centers the background image */
         }
+        .bw-filter {
+            filter: grayscale(100%); /* Convert image to black and white */
+        }
         .pit { background-color: purple; }
         .wumpus {
             background-image: url('https://as1.ftcdn.net/v2/jpg/01/86/51/66/1000_F_186516672_yMEmn6ZDracTQ7tczY3ApWpbpho7t8Hi.jpg'); /* Update with the correct path */
@@ -95,7 +98,7 @@
 <div id="labels">
     <label>Run ID: <span id="run-id"></span></label>
     <label>Moves: <span id="moves"></span></label>
-    <label>Gold: <span id="gold"></span></label>
+    <label>Gold Collected: <span id="gold"></span></label>
 </div>
 <script>
     function fetchGrid() {
@@ -105,12 +108,13 @@
                 response.agent_position,
                 response.run_id,
                 response.moves,
-                response.gold
+                response.gold_collected,
+                response.gold_data
             );
         });
     }
 
-    function displayGrid(grid, agentPosition, runId, moves, gold) {
+    function displayGrid(grid, agentPosition, runId, moves, goldCollected, goldData) {
         const container = $('#grid-container');
         container.empty(); // Clear the existing grid
         container.css('grid-template-columns', `repeat(${grid[0].length}, 100px)`); // Set the number of columns
@@ -120,6 +124,12 @@
                 const cellDiv = $('<div>')
                     .addClass('grid-cell')
                     .addClass(getClass(cell));
+                if (cell === 'G') {
+                    const isTaken = goldData.find(g => g.pos[0] === i && g.pos[1] === j && g.taken);
+                    if (isTaken) {
+                        cellDiv.addClass('bw-filter');
+                    }
+                }
                 const textSpan = $('<span>').addClass('text').text(getSymbol(cell));
                 cellDiv.append(textSpan);
                 if (i === agentPosition[0] && j === agentPosition[1]) {
@@ -131,7 +141,7 @@
 
         $('#run-id').text(runId);
         $('#moves').text(moves);
-        $('#gold').text(gold);
+        $('#gold').text(goldCollected);
     }
 
     function getClass(cell) {

@@ -20,10 +20,15 @@ grid = [['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
         ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X']
 ]
 
-agent_position = (0, 0)  # Starting position of the agent
+agent_position = (6, 3)  # Starting position of the agent
 run_id = "1234#234"
 moves = 0
-gold = 0
+gold_collected = 0
+gold_data = [
+    {'pos': (3, 10), 'taken': True},  # Position (row 4, column 11), not taken
+    {'pos': (9, 8), 'taken': True},   # Position (row 10, column 9), not taken
+    {'pos': (9, 9), 'taken': False}    # Position (row 10, column 10), not taken
+]
 
 
 @app.route('/')
@@ -38,30 +43,34 @@ def get_grid():
         'agent_position': agent_position,
         'run_id': run_id,
         'moves': moves,
-        'gold': gold
+        'gold_collected': gold_collected,
+        'gold_data': gold_data
     })
 
 
 @app.route('/update-grid', methods=['POST'])
 def update_grid():
-    global grid, agent_position, run_id, moves, gold
+    global grid, agent_position, run_id, moves, gold_collected, gold_data
     data = request.get_json()
     new_grid = data.get('grid')
     new_position = data.get('position')
     new_run_id = data.get('run_id')
     new_moves = data.get('moves')
-    new_gold = data.get('gold')
+    new_gold_collected = data.get('gold_collected')
+    new_gold_data = data.get('gold_data')
 
     if new_run_id:
         run_id = new_run_id
     if new_moves:
         moves = new_moves
-    if new_gold:
-        gold = new_gold
+    if new_gold_collected:
+        gold_collected = new_gold_collected
     if new_grid:
         grid = new_grid
     if new_position:
         agent_position = tuple(new_position)
+    if new_gold_data:
+        gold_data = new_gold_data
 
     return jsonify({
         'status': 'success'
