@@ -6,13 +6,24 @@ print(os.getcwd())
 app = Flask(__name__, template_folder='templates')
 
 # Initial grid state and agent position
-grid = [
-    [' ', 'G', ' ', 'G'],
-    ['W', ' ', 'P', ' '],
-    ['S', 'T', ' ', ' '],
-    [' ', ' ', 'P', 'W']
+grid = [['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
+        ['X', 'X', 'X', 'P', 'X', 'X', 'X', 'X', 'P', 'X', 'P', 'X', 'X', 'X'],
+        ['X', 'X', 'X', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'P', 'X', 'X'],
+        ['X', 'X', 'X', 'W', 'X', 'X', 'X', 'X', 'X', 'X', 'G', 'X', 'X', 'X'],
+        ['X', 'X', 'X', ' ', 'X', 'X', 'X', 'X', 'X', 'X', ' ', 'X', 'X', 'X'],
+        ['X', 'X', 'X', 'T', 'X', 'X', 'X', 'X', 'X', 'X', 'W', 'X', 'X', 'X'],
+        ['X', 'X', 'X', ' ', 'X', 'X', 'X', 'X', 'X', 'X', ' ', 'X', 'X', 'X'],
+        ['X', 'X', 'X', 'S', 'X', 'X', 'X', 'X', 'X', 'X', 'T', 'X', 'X', 'X'],
+        ['X', 'X', 'X', ' ', 'X', 'X', 'X', 'X', 'X', 'X', ' ', 'X', 'X', 'X'],
+        ['X', 'X', 'X', ' ', 'W', ' ', ' ', 'T', 'G', 'G', ' ', 'X', 'X', 'X'],
+        ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X'],
+        ['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X']
 ]
+
 agent_position = (0, 0)  # Starting position of the agent
+run_id = "1234#234"
+moves = 0
+gold = 0
 
 
 @app.route('/')
@@ -22,20 +33,39 @@ def index():
 
 @app.route('/get-grid', methods=['GET'])
 def get_grid():
-    return jsonify({'grid': grid, 'agent_position': agent_position})
+    return jsonify({
+        'grid': grid,
+        'agent_position': agent_position,
+        'run_id': run_id,
+        'moves': moves,
+        'gold': gold
+    })
 
 
 @app.route('/update-grid', methods=['POST'])
 def update_grid():
-    global grid, agent_position
+    global grid, agent_position, run_id, moves, gold
     data = request.get_json()
     new_grid = data.get('grid')
     new_position = data.get('position')
+    new_run_id = data.get('run_id')
+    new_moves = data.get('moves')
+    new_gold = data.get('gold')
+
+    if new_run_id:
+        run_id = new_run_id
+    if new_moves:
+        moves = new_moves
+    if new_gold:
+        gold = new_gold
     if new_grid:
         grid = new_grid
     if new_position:
         agent_position = tuple(new_position)
-    return jsonify({'status': 'success', 'grid': grid, 'agent_position': agent_position})
+
+    return jsonify({
+        'status': 'success'
+    })
 
 
 if __name__ == '__main__':

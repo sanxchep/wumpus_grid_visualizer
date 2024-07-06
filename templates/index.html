@@ -11,18 +11,19 @@
             gap: 2px;
             margin: 20px auto;
             position: relative;
-            max-width: 400px; /* Set to grid width */
+            max-width: 1400px; /* Updated to fit 14 cells of 100px each */
+            grid-template-rows: auto;
         }
         .grid-cell {
             width: 100px;
             height: 100px;
-            background-color: #f0f0f0; /* Default background */
+            background-color: #f0f0f0;
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;  /* Needed for positioning the agent image */
-            font-size: 20px;  /* Text size for visibility */
-            color: white;  /* Text color for visibility */
+            position: relative;
+            font-size: 20px;
+            color: white;
             box-shadow: 0 0 5px rgba(0,0,0,0.5);
         }
         .gold {
@@ -65,18 +66,51 @@
             text-align: center;
             z-index: 1; /* Ensure text is above the agent image */
         }
+
+        #labels {
+            display: flex;
+            justify-content: center; /* Align items in the center horizontally */
+            gap: 30px; /* Increased space between labels */
+            margin-top: 20px; /* Increased space above the labels */
+            margin-bottom: 30px; /* Increased space below the labels */
+        }
+
+        label {
+            background-color: #f9f9f9; /* Light background for visibility */
+            padding: 15px 30px; /* Increased padding around text */
+            border-radius: 8px; /* More pronounced rounded corners */
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.25); /* Enhanced shadow for depth */
+            font-size: 40px; /* Increased font size for better readability */
+            color: #333; /* Dark color for text, ensuring good contrast */
+        }
+
+        span {
+            font-weight: bold; /* Bold for emphasis */
+            color: #0056b3; /* Distinctive blue color for numeric values */
+        }
     </style>
 </head>
 <body>
 <div id="grid-container"></div>
+<div id="labels">
+    <label>Run ID: <span id="run-id"></span></label>
+    <label>Moves: <span id="moves"></span></label>
+    <label>Gold: <span id="gold"></span></label>
+</div>
 <script>
     function fetchGrid() {
         $.get('/get-grid', function(response) {
-            displayGrid(response.grid, response.agent_position);
+            displayGrid(
+                response.grid,
+                response.agent_position,
+                response.run_id,
+                response.moves,
+                response.gold
+            );
         });
     }
 
-    function displayGrid(grid, agentPosition) {
+    function displayGrid(grid, agentPosition, runId, moves, gold) {
         const container = $('#grid-container');
         container.empty(); // Clear the existing grid
         container.css('grid-template-columns', `repeat(${grid[0].length}, 100px)`); // Set the number of columns
@@ -94,6 +128,10 @@
                 container.append(cellDiv);
             });
         });
+
+        $('#run-id').text(runId);
+        $('#moves').text(moves);
+        $('#gold').text(gold);
     }
 
     function getClass(cell) {
