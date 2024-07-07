@@ -39,7 +39,11 @@
         .bw-filter {
             filter: grayscale(100%); /* Convert image to black and white */
         }
-        .pit { background-color: purple; }
+        .pit {
+            background-image: url('https://cdn-icons-png.flaticon.com/512/5019/5019286.png'); /* Update with the correct path */
+            background-size: cover;
+            background-position: center; /* Centers the background image */
+        }
         .wumpus {
             background-image: url('https://as1.ftcdn.net/v2/jpg/01/86/51/66/1000_F_186516672_yMEmn6ZDracTQ7tczY3ApWpbpho7t8Hi.jpg'); /* Update with the correct path */
             background-size: cover;
@@ -160,7 +164,7 @@
         switch(cell) {
             case 'G': return '';
             case 'S': return '';
-            case 'P': return 'Pit';
+            case 'P': return '';
             case 'W': return '';
             case 'T': return '';
             case 'X': return '';
